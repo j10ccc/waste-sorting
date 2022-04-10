@@ -9,4 +9,5 @@ export default defineConfig({
   antd: {
     mobile: false,
   },
+  title: '不聪明的垃圾桶',
 });

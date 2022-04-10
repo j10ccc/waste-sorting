@@ -8,7 +8,7 @@ import './index.css';
 import { Modal, Form, Input, ErrorBlock, Button } from 'antd-mobile';
 import axios from 'axios';
 
-export const host = 'http://localhost:8080';
+export const host = 'http://49.234.9.209';
 type WasteList = {
   id: number;
   type: number;
@@ -114,8 +114,15 @@ export default function IndexPage() {
     }
 
     if (localStorage.getItem('WASTESORTING_RECORD')) {
-      record = Number(localStorage.getItem('WASTESORTING_RECORD'));
-      console.log(record);
+      const recordDate = localStorage
+        .getItem('WASTESORTING_RECORD')
+        ?.split('&')[1];
+      const todayDate = new Date().toLocaleDateString();
+      if (recordDate === todayDate)
+        record = Number(
+          localStorage.getItem('WASTESORTING_RECORD')?.split('&')[0],
+        );
+      else localStorage.setItem('WASTESORTING_RECORD', '0&' + todayDate);
     }
   }, [step === 1]);
 
@@ -162,7 +169,7 @@ export default function IndexPage() {
     setPromptVisible(state);
   };
   async function getChallenge() {
-    await axios.get(host + '/waste-sort/getChallenge').then((response) => {
+    await axios.get(host + '/getChallenge').then((response) => {
       for (let i = 0; i < response.data.data.length; i++) {
         initialWasteList.push({
           id: i + 1,
@@ -175,14 +182,14 @@ export default function IndexPage() {
     });
   }
   async function getDict() {
-    await axios.get(host + '/waste-sort/getDict').then((response) => {
-      WasteType = response.data;
+    await axios.get(host + '/getDict').then((response) => {
+      WasteType = response.data.data;
       setStep((state) => state + 1);
     });
   }
   useEffect(() => {
-    getDict();
-    getChallenge();
+    getDict(); // 先获取字典
+    getChallenge(); // 再获取挑战信息
   }, []);
 
   let toggleWasteList = (num: number, pos: number) => {

@@ -12,7 +12,7 @@ export default function Rank(props: any) {
   const [rank, setRank] = useState<Rank[]>();
 
   useEffect(() => {
-    axios.get(host + '/waste-sort/getData').then((response) => {
+    axios.get(host + '/getData').then((response) => {
       setRank((state) => response.data.data);
     });
   }, []);
